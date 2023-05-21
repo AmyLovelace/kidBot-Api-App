@@ -1,23 +1,39 @@
 package client.impl;
 
-import java.io.IOException;
+import client.ApiClient;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.hc.client5.http.fluent.Request;
-import org.apache.hc.client5.http.fluent.Response;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
-public class ApiClientImpl {
+public class ApiClientImpl implements ApiClient {
 
-    public String createStory(String parameter) {
-
-        String result = null;
+    @Override
+    public HttpResponse<String> createStory(String endpoint, String apiKey, String requestBody) {
         try {
-            Response response = Request.get("https://api.kanye.rest/").execute();
-            result = response.returnContent().asString();
-        } catch (IOException e) {
+
+            HttpRequest.BodyPublisher payload = HttpRequest.BodyPublishers.ofString(requestBody);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + apiKey)
+                    .POST(payload)
+                    .build();
+
+            HttpClient httpClient = HttpClient.newHttpClient();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            return response;
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return result;
 
+        return null;
     }
 }
 

@@ -1,12 +1,10 @@
 package client;
-
-import okhttp3.ResponseBody;
-
+import java.net.http.HttpResponse;
 
 
 public interface ApiClient {
 
-      ResponseBody createStory(String parameter);
+       HttpResponse<String> createStory(String endpoint, String token, String requestBody) ;
 
 
 }
